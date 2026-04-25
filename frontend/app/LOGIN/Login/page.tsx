@@ -14,7 +14,7 @@ export default function LoginPage() {
       <div className="absolute w-72 h-72 bg-pink-600/30 blur-3xl rounded-full bottom-10 right-10"></div>
 
       {/* Card */}
-      <div className="relative w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-[0_0_60px_rgba(255,255,255,0.05)]">
+      <div className="relative mb-20 w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-[0_0_60px_rgba(255,255,255,0.05)]">
 
         {/* Header */}
         <h2 className="text-3xl font-semibold mb-2 text-center">

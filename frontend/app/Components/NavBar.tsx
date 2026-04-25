@@ -1,68 +1,158 @@
 "use client";
 
 import { useState } from "react";
+import { ShoppingCart, Search, Sun, Moon } from "lucide-react";
+import Link from "next/link";
 
-export default function Layout() {
-  const [open, setOpen] = useState(false);
+export default function Navbar() {
+  const [dark, setDark] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(true);
 
   return (
-    <header className="w-full bg-white border-b shadow-sm">
+    <nav
+      className={`sticky top-0 z-50 border-b transition-colors duration-300 ${
+        dark
+          ? "bg-gray-900 border-gray-800 text-white"
+          : "bg-white border-gray-200 text-gray-900"
+      }`}
+    >
 
-      {/* Top Bar */}
-      <div className="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
+      {/* DESKTOP */}
+      <div className="hidden sm:flex items-center justify-between max-w-7xl mx-auto px-6 h-16">
 
-        {/* Logo */}
-        <div className="text-2xl font-bold text-black">
-          Shop<span className="text-purple-600">Ease</span>
+        {/* LEFT - Logo */}
+        <div className="font-semibold text-lg mr-6">
+          <Link href="/">Store</Link>
         </div>
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex gap-6 text-sm font-medium text-gray-700">
-          <a href="#" className="hover:text-purple-600">Home</a>
-          <a href="#" className="hover:text-purple-600">Shop</a>
-          <a href="#" className="hover:text-purple-600">Categories</a>
-          <a href="#" className="hover:text-purple-600">Deals</a>
-          <a href="#" className="hover:text-purple-600">Contact</a>
-        </nav>
+        {/* CENTER - Search */}
+        <div className="flex flex-1 max-w-2xl">
+          <div
+            className={`flex w-full items-center rounded-full border overflow-hidden ${
+              dark ? "bg-gray-800 border-gray-700" : "bg-gray-100 border-gray-200"
+            }`}
+          >
+            <input
+              placeholder="Search products..."
+              className="flex-1 px-5 py-2 bg-transparent outline-none text-sm"
+            />
+            <button
+              className={`px-4 py-2 ${
+                dark ? "hover:bg-gray-700" : "hover:bg-gray-200"
+              }`}
+            >
+              <Search size={18} />
+            </button>
+          </div>
+        </div>
 
-        {/* Icons */}
-        <div className="flex items-center gap-4">
+        {/* RIGHT */}
+        <div className="flex items-center gap-4 ml-6">
 
-          {/* Search */}
-          <button className="hover:text-purple-600">🔍</button>
+          {/* Theme */}
+          <button
+            onClick={() => setDark(!dark)}
+            className="p-2 rounded-full hover:bg-opacity-10 hover:bg-gray-500 transition"
+          >
+            {dark ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
+
+          {/* Checkout */}
+          <button
+            className={`px-4 py-2 rounded-full text-sm font-medium ${
+              dark ? "bg-white text-black" : "bg-black text-white"
+            }`}
+          >
+            Checkout
+          </button>
 
           {/* Cart */}
-          <button className="relative hover:text-purple-600">
-            🛒
-            <span className="absolute -top-2 -right-2 text-xs bg-purple-600 text-white w-4 h-4 flex items-center justify-center rounded-full">
+          <div className="relative">
+            <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
+              <ShoppingCart size={20} />
+            </button>
+            <span className="absolute -top-1 -right-1 text-xs bg-red-500 text-white px-1.5 rounded-full">
               2
             </span>
-          </button>
+          </div>
 
           {/* Profile */}
-          <button className="hover:text-purple-600">👤</button>
+          <div className="w-9 h-9 flex items-center justify-center rounded-full bg-indigo-600 text-white text-sm font-semibold">
+            A
+          </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden text-xl"
-            onClick={() => setOpen(!open)}
-          >
-            ☰
+          {/* Login */}
+          <button className="px-3 py-2 text-sm border rounded-full">
+            {loggedIn ? "Logout" : "Login"}
           </button>
+
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      {open && (
-        <div className="md:hidden px-6 pb-4 space-y-2 text-sm font-medium text-gray-700">
-          <a href="#" className="block hover:text-purple-600">Home</a>
-          <a href="#" className="block hover:text-purple-600">Shop</a>
-          <a href="#" className="block hover:text-purple-600">Categories</a>
-          <a href="#" className="block hover:text-purple-600">Deals</a>
-          <a href="#" className="block hover:text-purple-600">Contact</a>
-        </div>
-      )}
+      {/* MOBILE (completely redesigned, NOT compressed desktop) */}
+      <div className="sm:hidden px-4 py-3 space-y-3">
 
-    </header>
+        {/* TOP BAR */}
+        <div className="flex items-center justify-between">
+
+          <div className="font-semibold text-lg">Store</div>
+
+          <div className="flex items-center gap-3">
+
+            <button onClick={() => setDark(!dark)}>
+              {dark ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+
+            <div className="relative">
+              <ShoppingCart size={20} />
+              <span className="absolute -top-1 -right-2 text-xs bg-red-500 text-white px-1 rounded-full">
+                2
+              </span>
+            </div>
+
+          </div>
+        </div>
+
+        {/* SEARCH (full width, not squeezed) */}
+        <div
+          className={`flex items-center rounded-full border overflow-hidden ${
+            dark ? "bg-gray-800 border-gray-700" : "bg-gray-100 border-gray-200"
+          }`}
+        >
+          <input
+            placeholder="Search products..."
+            className="flex-1 px-4 py-2 bg-transparent outline-none text-sm"
+          />
+          <button className="px-4 py-2">
+            <Search size={16} />
+          </button>
+        </div>
+
+        {/* ACTION ROW */}
+        <div className="flex justify-between items-center">
+
+          <button
+            className={`px-4 py-2 rounded-full text-sm ${
+              dark ? "bg-white text-black" : "bg-black text-white"
+            }`}
+          >
+            Checkout
+          </button>
+
+          <div className="flex items-center gap-3">
+
+            <div className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-sm font-semibold">
+              A
+            </div>
+
+            <button className="px-3 py-2 text-sm border rounded-full">
+              {loggedIn ? "Logout" : "Login"}
+            </button>
+
+          </div>
+
+        </div>
+      </div>
+    </nav>
   );
 }
