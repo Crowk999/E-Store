@@ -23,4 +23,5 @@ urlpatterns = [
     path("products/", get_products),
     path('products/<int:id>/', get_product_detail),
     path("add-products/", add_products),
+    
 ]
