@@ -1,5 +1,6 @@
 import products from "../../lib/product";
 import ProductClient from "./product_client";
+import ProductNotFound from "./NoProduct";
 
 export default async function ProductPage({ params }: any) {
   const { id } = await params;
@@ -9,7 +10,7 @@ export default async function ProductPage({ params }: any) {
   );
 
   if (!product) {
-    return <div>Product not found</div>;
+    return (<ProductNotFound />);
   }
 
  

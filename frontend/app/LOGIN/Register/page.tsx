@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link"
+import { supabase } from "@/utils/supabase/client"; 
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -12,6 +13,9 @@ export default function SignupPage() {
     password: "",
     confirmPassword: "",
   });
+
+  const [loading, setLoading] = useState(false); // ✅ (ADDED)
+  const [errorMsg, setErrorMsg] = useState(""); // ✅ (ADDED)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -29,13 +33,58 @@ export default function SignupPage() {
     form.confirmPassword &&
     !passwordMismatch;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // ✅ (UPDATED) CONNECTED TO SUPABASE
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isValid) return;
+
+    setLoading(true);
+    setErrorMsg("");
+
+    // 🔥 Supabase signup
+    const { data, error } = await supabase.auth.signUp({
+      email: form.email,
+      password: form.password,
+      options: {
+        data: {
+          name: form.name, // ✅ (ADDED: store name in Supabase user metadata)
+        },
+      },
+    });
+
+    setLoading(false);
+
+    if (error) {
+      setErrorMsg(error.message); // ✅ (ADDED)
+      return;
+    }
+
+    // ✅ Success
+    alert("Check your email to verify your account!");
+    console.log(data);
+  };
+
+  // ✅ (ADDED) Google OAuth
+  const handleGoogle = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+    });
+  };
+
+  // ✅ (ADDED) GitHub OAuth
+  const handleGitHub = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: "github",
+    });
+  };
+
+  /*const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isValid) return;
 
     alert("Signup data ready to send to backend");
     console.log(form);
-  };
+  };*/
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black text-white px-4">
@@ -127,9 +176,15 @@ export default function SignupPage() {
             )}
           </div>
 
+          {errorMsg && (
+            <p className="text-red-400 text-sm text-center">
+              {errorMsg}
+            </p>
+          )}
+
           {/* Submit */}
           <button
-            disabled={!isValid}
+            disabled={!isValid || loading} // ✅ (ADDED: disable when loading)
             className={`w-full py-3 rounded-lg font-semibold transition
               ${
                 isValid
@@ -137,6 +192,7 @@ export default function SignupPage() {
                   : "bg-gray-700 cursor-not-allowed"
               }`}
           >
+            {loading ? "Creating..." : "Sign Up"} 
             Sign Up
           </button>
         </form>
@@ -152,14 +208,14 @@ export default function SignupPage() {
         <div className="grid grid-cols-2 gap-4">
 
           <button
-            onClick={() => alert("Google OAuth clicked")}
+            onClick={handleGoogle}
             className="py-2 rounded-lg bg-white/10 hover:bg-white/20 transition text-sm"
           >
             🔵 Google
           </button>
 
           <button
-            onClick={() => alert("GitHub OAuth clicked")}
+            onClick={handleGitHub}
             className="py-2 rounded-lg bg-white/10 hover:bg-white/20 transition text-sm"
           >
             ⚫ GitHub

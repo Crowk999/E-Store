@@ -2,9 +2,59 @@
 
 import { useState } from "react";
 import Link from "next/link"
+import { supabase } from "@/utils/supabase/client";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+
+ // ✅ (ADDED) form state
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  // ✅ (ADDED) loading + error
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  // ✅ (ADDED) handle login
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    setLoading(true);
+    setErrorMsg("");
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    setLoading(false);
+
+    if (error) {
+      setErrorMsg(error.message); // ✅ show error
+      return;
+    }
+
+    // ✅ success
+    alert("Login successful!");
+    console.log(data);
+
+    // 👉 redirect after login (you can change route)
+    window.location.href = "/";
+  };
+
+  // ✅ (ADDED) Google login
+  const handleGoogle = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+    });
+  };
+
+  // ✅ (ADDED) GitHub login
+  const handleGitHub = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: "github",
+    });
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black text-white px-4">
@@ -25,13 +75,15 @@ export default function LoginPage() {
         </p>
 
         {/* Form */}
-        <form className="space-y-6">
+        <form onSubmit={handleLogin} className="space-y-6">
 
           {/* Email */}
           <div className="relative">
             <input
               type="email"
               required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder=" "
               className="peer w-full px-4 pt-5 pb-2 bg-transparent border border-white/20 rounded-lg focus:outline-none focus:border-purple-400"
             />
@@ -48,6 +100,8 @@ export default function LoginPage() {
             <input
               type={showPassword ? "text" : "password"}
               required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder=" "
               className="peer w-full px-4 pt-5 pb-2 bg-transparent border border-white/20 rounded-lg focus:outline-none focus:border-purple-400"
             />
@@ -67,6 +121,12 @@ export default function LoginPage() {
             </button>
           </div>
 
+          {errorMsg && (
+            <p className="text-red-400 text-sm text-center">
+              {errorMsg}
+            </p>
+          )}
+
           {/* Options */}
           <div className="flex items-center justify-between text-sm text-white/60">
             <label className="flex items-center gap-2">
@@ -79,8 +139,11 @@ export default function LoginPage() {
           </div>
 
           {/* Button */}
-          <button className="w-full py-3 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 font-semibold hover:opacity-90 transition">
-            Sign In
+          <button
+            disabled={loading} // ✅ (ADDED)
+            className="w-full py-3 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 font-semibold hover:opacity-90 transition"
+          >
+            {loading ? "Signing in..." : "Sign In"} {/* ✅ (UPDATED) */}
           </button>
         </form>
 
@@ -93,10 +156,16 @@ export default function LoginPage() {
 
         {/* Social buttons */}
         <div className="grid grid-cols-2 gap-4">
-          <button className="py-2 rounded-lg bg-white/10 hover:bg-white/20 transition text-sm">
+          <button
+            onClick={handleGoogle}
+            className="py-2 rounded-lg bg-white/10 hover:bg-white/20 transition text-sm"
+          >
             Google
           </button>
-          <button className="py-2 rounded-lg bg-white/10 hover:bg-white/20 transition text-sm">
+          <button
+            onClick={handleGitHub}
+            className="py-2 rounded-lg bg-white/10 hover:bg-white/20 transition text-sm"
+          >
             GitHub
           </button>
         </div>

@@ -67,6 +67,7 @@ export default function Navbar() {
           </button>
 
           {/* Cart */}
+          <Link href="/Pages/Cart">
           <div className="relative">
             <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
               <ShoppingCart size={20} />
@@ -75,6 +76,7 @@ export default function Navbar() {
               2
             </span>
           </div>
+          </Link>
 
           {/* Profile */}
           <div className="w-9 h-9 flex items-center justify-center rounded-full bg-indigo-600 text-white text-sm font-semibold">
