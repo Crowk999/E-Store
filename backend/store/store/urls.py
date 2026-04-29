@@ -16,11 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from app.views import get_products, add_products, get_product_detail
+from app.views import get_products, add_products, get_product_detail, get_auth
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("products/", get_products),
     path('products/<int:id>/', get_product_detail),
     path("add-products/", add_products),
+    path("imagekit-auth/", get_auth),
 ]

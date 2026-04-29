@@ -3,15 +3,49 @@ import { useState, useRef } from "react";
 
 export default function AddProductPage() {
   const [image, setImage] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
   const [countdown, setCountdown] = useState<number>(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const loadImage = (file: File) => {
-    if (!file || !file.type.startsWith("image/")) return;
-    const reader = new FileReader();
-    reader.onload = (e) => setImage(e.target?.result as string);
-    reader.readAsDataURL(file);
+  if (!file || !file.type.startsWith("image/")) return;
+
+  setFile(file); // ✅ store real file
+
+  const reader = new FileReader();
+  reader.onload = (e) => setImage(e.target?.result as string);
+  reader.readAsDataURL(file);
   };
+
+  const uploadToImageKit = async () => {
+  if (!file) return null;
+
+  // 1. Get auth from Django
+  const authRes = await fetch("http://localhost:8000/imagekit-auth/");
+  const auth = await authRes.json();
+
+  // 2. Upload to ImageKit
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("fileName", file.name);
+  formData.append("publicKey", "public_ZlPPlks3ZilPQ95dIM4ip19laNY=");
+  formData.append("token", auth.token);
+  formData.append("expire", auth.expire);
+  formData.append("signature", auth.signature);
+
+  const res = await fetch(
+    "https://upload.imagekit.io/api/v1/files/upload",
+    {
+      method: "POST",
+      body: formData,
+    }
+  );
+
+  const data = await res.json();
+
+  return data.url; // ✅ final image URL
+  };
+
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
@@ -19,19 +53,40 @@ export default function AddProductPage() {
     if (file) loadImage(file);
   };
 
-  const handleSubmit = () => {
-    if (countdown > 0) return;
-    let t = 10;
-    setCountdown(t);
-    const iv = setInterval(() => {
-      t--;
-      if (t <= 0) {
-        clearInterval(iv);
-        setCountdown(0);
-      } else {
-        setCountdown(t);
-      }
-    }, 1000);
+  const handleSubmit = async () => {
+  if (countdown > 0) return;
+
+  // 🔥 STEP 1: upload image
+  const imageUrl = await uploadToImageKit();
+
+  console.log("Image URL:", imageUrl);
+
+  // 🔥 STEP 2: send to Django
+  await fetch("http://localhost:8000/products/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name: "Your name here",
+      price: 100,
+      description: "Your desc",
+      image: imageUrl, // ✅ THIS is what you store
+    }),
+  });
+
+  //  Countdown logic 
+  let t = 10;
+  setCountdown(t);
+  const iv = setInterval(() => {
+    t--;
+    if (t <= 0) {
+      clearInterval(iv);
+      setCountdown(0);
+    } else {
+      setCountdown(t);
+    }
+  }, 1000);
   };
 
   return (
