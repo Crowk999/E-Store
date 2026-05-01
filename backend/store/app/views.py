@@ -55,6 +55,8 @@ def add_products(request):
 
     if serializer.is_valid():
         serializer.save()
+        print("SAVED:", serializer.data) 
         return Response(serializer.data)
     
+    print("ERRORS:", serializer.errors)
     return Response(serializer.errors)

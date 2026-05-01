@@ -78,10 +78,10 @@ export default function AddProductPage() {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-    name,
-    price,
-    description,
-    image: imageUrl,
+    product_name:name,
+    product_price:price,
+    product_description:description,
+    product_image: imageUrl,
       }),
   });
 

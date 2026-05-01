@@ -1,8 +1,24 @@
+"use client";
 import Link from "next/link";
-import products from "./lib/product";
+import { useEffect, useState } from "react";
+
 
 export default function ProductsPage() {
 
+  const [products, setProducts] = useState<Product[]>([]);
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/products/")
+      .then(res => res.json())
+      .then(data => setProducts(data));
+  }, []);
+
+  type Product = {
+  id: number;
+  product_name: string;
+  product_price: number;
+  product_description: string;
+  product_image: string;
+};
 
   return (
     <div className="bg-gray-950 min-h-screen text-gray-200 px-6 py-12">
@@ -30,8 +46,8 @@ export default function ProductsPage() {
             {/* IMAGE */}
             <div className="h-44 rounded-xl overflow-hidden mb-5 bg-gray-800 group-hover:scale-[1.02] transition duration-300">
               <img
-                src={item.image}
-                alt={item.name}
+                src={item.product_image}
+                alt={item.product_name}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -40,18 +56,18 @@ export default function ProductsPage() {
             <div className="space-y-2 relative z-10">
 
               <h2 className="text-lg font-semibold group-hover:translate-x-1 transition duration-300">
-                {item.name}
+                {item.product_name}
               </h2>
 
               <p className="text-sm text-gray-400 group-hover:text-gray-300 transition">
-                {item.desc}
+                {item.product_description}
               </p>
 
               <div className="flex items-center justify-between mt-4">
 
                 <div className="flex items-baseline gap-1 text-white font-bold text-lg">
                   <span className="text-sm text-gray-400">NPR</span>
-                  <span>{item.price}</span>
+                  <span>{item.product_price}</span>
                 </div>
 
                 <Link href={`/Product/${item.id}`} className="px-4 py-2 text-sm rounded-full bg-gray-800 hover:bg-gray-700 transition-all duration-300 group-hover:scale-105 group-hover:bg-indigo-600 group-hover:text-white">
