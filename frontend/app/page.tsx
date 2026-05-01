@@ -2,6 +2,13 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+type Product = {
+  id: number;
+  product_name: string;
+  product_price: number;
+  product_description: string;
+  product_image: string;
+};
 
 export default function ProductsPage() {
 
@@ -12,13 +19,7 @@ export default function ProductsPage() {
       .then(data => setProducts(data));
   }, []);
 
-  type Product = {
-  id: number;
-  product_name: string;
-  product_price: number;
-  product_description: string;
-  product_image: string;
-};
+  
 
   return (
     <div className="bg-gray-950 min-h-screen text-gray-200 px-6 py-12">
@@ -70,7 +71,7 @@ export default function ProductsPage() {
                   <span>{item.product_price}</span>
                 </div>
 
-                <Link href={`/Product/${item.id}`} className="px-4 py-2 text-sm rounded-full bg-gray-800 hover:bg-gray-700 transition-all duration-300 group-hover:scale-105 group-hover:bg-indigo-600 group-hover:text-white">
+                <Link href={item?.id ? `/product/${item.id}` : "#"} className="px-4 py-2 text-sm rounded-full bg-gray-800 hover:bg-gray-700 transition-all duration-300 group-hover:scale-105 group-hover:bg-indigo-600 group-hover:text-white">
                   Details
                 </Link>
 
