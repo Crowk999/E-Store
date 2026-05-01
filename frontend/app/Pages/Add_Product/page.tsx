@@ -6,9 +6,15 @@ export default function AddProductPage() {
   const [file, setFile] = useState<File | null>(null);
   const [countdown, setCountdown] = useState<number>(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const isSubmitting = useRef(false);
+
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState("");
+  const [description, setDescription] = useState("");
 
   const loadImage = (file: File) => {
   if (!file || !file.type.startsWith("image/")) return;
+  isSubmitting.current = true;
 
   setFile(file); // ✅ store real file
 
@@ -20,15 +26,12 @@ export default function AddProductPage() {
   const uploadToImageKit = async () => {
   if (!file) return null;
 
-  // 1. Get auth from Django
   const authRes = await fetch("http://localhost:8000/imagekit-auth/");
   const auth = await authRes.json();
-
-  // 2. Upload to ImageKit
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("fileName", file.name);
   formData.append("publicKey", "public_ZlPPlks3ZilPQ95dIM4ip19laNY=");
+  formData.append("fileName", file.name);
   formData.append("token", auth.token);
   formData.append("expire", auth.expire);
   formData.append("signature", auth.signature);
@@ -43,8 +46,15 @@ export default function AddProductPage() {
 
   const data = await res.json();
 
-  return data.url; // ✅ final image URL
-  };
+  console.log("FULL ImageKit response:", data);
+
+  if (!data.url) {
+    console.error("UPLOAD FAILED:", data);
+    return null;
+  }
+
+  return data.url;
+};
 
 
   const handleDrop = (e: React.DragEvent) => {
@@ -62,17 +72,17 @@ export default function AddProductPage() {
   console.log("Image URL:", imageUrl);
 
   // 🔥 STEP 2: send to Django
-  await fetch("http://localhost:8000/products/", {
+  await fetch("http://localhost:8000/add-products/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      name: "Your name here",
-      price: 100,
-      description: "Your desc",
-      image: imageUrl, // ✅ THIS is what you store
-    }),
+    name,
+    price,
+    description,
+    image: imageUrl,
+      }),
   });
 
   //  Countdown logic 
@@ -83,6 +93,7 @@ export default function AddProductPage() {
     if (t <= 0) {
       clearInterval(iv);
       setCountdown(0);
+      isSubmitting.current = false; 
     } else {
       setCountdown(t);
     }
@@ -175,6 +186,8 @@ export default function AddProductPage() {
                 <input
                   type="text"
                   placeholder="e.g. Wireless Earbuds"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   className="w-full bg-[#0d0d16] border border-white/7 rounded-xl px-4 py-3 text-slate-200 text-[0.88rem] placeholder:text-slate-500/40 outline-none focus:border-violet-400/45 focus:ring-2 focus:ring-violet-400/7 transition-colors"
                 />
               </div>
@@ -189,6 +202,8 @@ export default function AddProductPage() {
                   <input
                     type="number"
                     placeholder="0.00"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
                     min="0"
                     className="w-full bg-[#0d0d16] border border-white/7 rounded-xl pl-10 pr-4 py-3 text-slate-200 text-[0.88rem] placeholder:text-slate-500/40 outline-none focus:border-violet-400/45 focus:ring-2 focus:ring-violet-400/7 transition-colors"
                   />
@@ -203,6 +218,8 @@ export default function AddProductPage() {
               </p>
               <textarea
                 rows={4}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
                 placeholder="Describe your product — features, materials, dimensions…"
                 className="w-full bg-[#0d0d16] border border-white/7 rounded-xl px-4 py-3 text-slate-200 text-[0.88rem] placeholder:text-slate-500/40 outline-none focus:border-violet-400/45 focus:ring-2 focus:ring-violet-400/7 transition-colors resize-none leading-relaxed"
               />

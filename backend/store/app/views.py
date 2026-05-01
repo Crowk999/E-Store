@@ -5,20 +5,37 @@ from .models import Add_Product
 from .serializer import ProductSerializer
 import os
 from dotenv import load_dotenv
-load_dotenv()
-import imagekitio
+load_dotenv() 
+from imagekitio import ImageKit
 # Create your views here.
+import time
+import hmac
+import hashlib
+import base64
+import random
+import string
 
-
-imagekit = imagekitio.ImageKit(
-    public_key=os.getenv("IMAGEKIT_PUBLIC_KEY"),
-    private_key=os.getenv("IMAGEKIT_PRIVATE_KEY"),
-    url_endpoint=os.getenv("IMAGEKIT_URL_ENDPOINT"),
-)
+def random_token(length=16):
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
 
 @api_view(["GET"])
 def get_auth(request):
-    return Response(imagekit.get_authentication_parameters())
+    token = random_token()
+    expire = int(time.time()) + 2400  # 40 minutes
+
+    private_key = os.getenv("IMAGEKIT_PRIVATE_KEY")
+
+    # signature = HMAC-SHA1(token + expire, private_key)
+    message = f"{token}{expire}".encode()
+    secret = private_key.encode()
+
+    signature = hmac.new(secret, message, hashlib.sha1).hexdigest()
+
+    return Response({
+        "token": token,
+        "expire": expire,
+        "signature": signature
+    })
 
 @api_view(["GET"])
 def get_products(request):
