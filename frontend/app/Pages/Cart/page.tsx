@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 type CartItem = {
@@ -11,6 +11,13 @@ type CartItem = {
   quantity: number;
   image: string;
   color: string;
+};
+type Product = {
+  id: number;
+  product_name: string;
+  product_price: number;
+  product_description: string;
+  product_image: string;
 };
 
 export default function Page() {
@@ -43,6 +50,13 @@ export default function Page() {
       color: "Carbon Core",
     },
   ]);
+
+    const [products, setProducts] = useState<Product[]>([]);
+    useEffect(() => {
+      fetch("http://127.0.0.1:8000/products/")
+        .then(res => res.json())
+        .then(data => setProducts(data));
+    }, []);
 
   const [removingId, setRemovingId] = useState<number | null>(null);
 

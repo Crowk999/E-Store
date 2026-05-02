@@ -7,6 +7,9 @@ class Add_Product(models.Model):
     product_price = models.IntegerField(null=False, blank=False)
     product_description = models.CharField(max_length = 200, null=False, blank=False)   
     product_image = models.URLField( null=True, blank=True)
+    product_brand = models.CharField(default="")
+    product_colour = models.CharField(default="")
 
     def __str__(self):
         return self.product_name
+    

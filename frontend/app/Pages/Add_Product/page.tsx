@@ -11,6 +11,9 @@ export default function AddProductPage() {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
+  const [brand, setBrand] = useState("");
+  const [colour, setColour] = useState("");
+  
 
   const loadImage = (file: File) => {
   if (!file || !file.type.startsWith("image/")) return;
@@ -78,10 +81,12 @@ export default function AddProductPage() {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-    product_name:name,
-    product_price:price,
-    product_description:description,
+    product_name: name,
+    product_price: price,
+    product_description: description,
     product_image: imageUrl,
+    product_brand: brand,
+    product_colour: colour
       }),
   });
 
@@ -209,6 +214,35 @@ export default function AddProductPage() {
                   />
                 </div>
               </div>
+            </div>
+
+            {/* Brand and Colour */}
+            <div className="grid grid-cols-2 gap-3.5">
+              <div>
+                <p className="text-[0.68rem] font-semibold uppercase tracking-widest text-violet-400/70 mb-2">
+                  Product Brand
+                </p>
+                <input
+                  type="text"
+                  placeholder="Brand of Product"
+                  value={brand}
+                  onChange={(e) => setBrand(e.target.value)}
+                  className="w-full bg-[#0d0d16] border border-white/7 rounded-xl px-4 py-3 text-slate-200 text-[0.88rem] placeholder:text-slate-500/40 outline-none focus:border-violet-400/45 focus:ring-2 focus:ring-violet-400/7 transition-colors"
+                />
+              </div>
+              <div>
+                <p className="text-[0.68rem] font-semibold uppercase tracking-widest text-violet-400/70 mb-2">
+                  Product Colour
+                </p>
+                <input
+                  type="text"
+                  placeholder="Colour of Product"
+                  value={colour}
+                  onChange={(e) => setColour(e.target.value)}
+                  className="w-full bg-[#0d0d16] border border-white/7 rounded-xl px-4 py-3 text-slate-200 text-[0.88rem] placeholder:text-slate-500/40 outline-none focus:border-violet-400/45 focus:ring-2 focus:ring-violet-400/7 transition-colors"
+                />
+              </div>
+
             </div>
 
             {/* Description */}
