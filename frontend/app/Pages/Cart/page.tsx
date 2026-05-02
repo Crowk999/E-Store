@@ -70,29 +70,29 @@ export default function Page() {
   };
 
   const removeItem = async (id: number) => {
-  const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
-  if (!token) return;
+    if (!token) return;
 
-  setRemovingId(id);
+    setRemovingId(id);
 
-  const res = await fetch(`http://127.0.0.1:8000/remove-from-cart/${id}/`, {
-    method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+    const res = await fetch(`http://127.0.0.1:8000/remove-from-cart/${id}/`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-  if (!res.ok) {
-    console.error("Failed to delete item");
+    if (!res.ok) {
+      console.error("Failed to delete item");
+      setRemovingId(null);
+      return;
+    }
+
     setRemovingId(null);
-    return;
-  }
-
-  setRemovingId(null);
 
   fetchCart(); // refresh from backend
-};
+  };
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 

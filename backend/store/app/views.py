@@ -158,7 +158,7 @@ def get_cart(request):
 @api_view(["DELETE"])
 def remove_from_cart(request, id):
     auth_header = request.headers.get("Authorization")
-    print("AUTH HEADER:", auth_header)
+    #print("AUTH HEADER:", auth_header)
     if not auth_header:
         return Response({"error": "No token"}, status=401)
 

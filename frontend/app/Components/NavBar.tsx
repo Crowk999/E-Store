@@ -1,12 +1,48 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ShoppingCart, Search, Sun, Moon } from "lucide-react";
 import Link from "next/link";
+import { supabase } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [dark, setDark] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [userInitial, setUserInitial] = useState(""); // 👈 NEW: store user initial
+  const router = useRouter();
+
+  // Check if user is logged in
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setLoggedIn(!!user);
+      
+      // 👈 NEW: Extract first letter from user's name
+      if (user?.user_metadata?.name) {
+        const initial = user.user_metadata.name.charAt(0).toUpperCase();
+        setUserInitial(initial);
+      }
+      
+      setLoading(false);
+    };
+
+    checkAuth();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+      checkAuth();
+    });
+
+    return () => subscription?.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setLoggedIn(false);
+    router.push("/");
+  };
 
   return (
     <nav
@@ -80,13 +116,26 @@ export default function Navbar() {
 
           {/* Profile */}
           <div className="w-9 h-9 flex items-center justify-center rounded-full bg-indigo-600 text-white text-sm font-semibold">
-            A
+            {userInitial || "U"}
           </div>
 
-          {/* Login */}
-          <button className="px-3 py-2 text-sm border rounded-full">
-            {loggedIn ? "Logout" : "Login"}
-          </button>
+          {/* Login/Logout */}
+          {!loading && (
+            loggedIn ? (
+              <button 
+                onClick={handleLogout}
+                className="px-3 py-2 text-sm border rounded-full hover:bg-red-50 dark:hover:bg-red-900 transition"
+              >
+                Logout
+              </button>
+            ) : (
+              <Link href="/LOGIN/Login">
+                <button className="px-3 py-2 text-sm border rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+                  Login
+                </button>
+              </Link>
+            )
+          )}
 
         </div>
       </div>
@@ -144,12 +193,25 @@ export default function Navbar() {
           <div className="flex items-center gap-3">
 
             <div className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-sm font-semibold">
-              A
+              {userInitial || "U"}
             </div>
 
-            <button className="px-3 py-2 text-sm border rounded-full">
-              {loggedIn ? "Logout" : "Login"}
-            </button>
+            {!loading && (
+              loggedIn ? (
+                <button 
+                  onClick={handleLogout}
+                  className="px-3 py-2 text-sm border rounded-full hover:bg-red-50 dark:hover:bg-red-900 transition"
+                >
+                  Logout
+                </button>
+              ) : (
+                <Link href="/LOGIN/Login">
+                  <button className="px-3 py-2 text-sm border rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+                    Login
+                  </button>
+                </Link>
+              )
+            )}
 
           </div>
 
