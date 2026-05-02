@@ -42,7 +42,16 @@ export default function Page() {
     }
 
     const data = await res.json();
-    setCart(data);
+    const mapped = data.map((item: any) => ({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      image: item.image,
+      brand: item.brand,
+      color: item.color,
+      quantity: item.product_quantity,  // ✅ normalize here
+    }));
+    setCart(mapped);
   };
 
   useEffect(() => {

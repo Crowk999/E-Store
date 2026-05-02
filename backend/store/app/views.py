@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Add_Product, Cart
-from .serializer import ProductSerializer
+from .serializer import CartSerializer, ProductSerializer
 import os
 from dotenv import load_dotenv
 load_dotenv() 
@@ -140,20 +140,9 @@ def get_cart(request):
 
     cart_items = Cart.objects.filter(user_id=user["id"])
 
-    data = []
-    for item in cart_items:
-        data.append({
-            "id": item.id,
-            "product_id": item.product.id,
-            "name": item.product.product_name,
-            "price": item.product.product_price,
-            "quantity": item.product_quantity,
-            "image": item.product.product_image,
-            "brand": item.product.product_brand,
-            "color": item.product.product_colour,
-        })
+    serializer = CartSerializer(cart_items, many=True)
 
-    return Response(data)
+    return Response(serializer.data)
 
 @api_view(["DELETE"])
 def remove_from_cart(request, id):
