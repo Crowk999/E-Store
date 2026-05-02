@@ -12,4 +12,9 @@ class Add_Product(models.Model):
 
     def __str__(self):
         return self.product_name
+
+class Cart(models.Model):
+    user_id = models.CharField(max_length=255)
+    product = models.ForeignKey("Add_Product", on_delete=models.CASCADE)
+    product_quantity = models.IntegerField(null=False)
     

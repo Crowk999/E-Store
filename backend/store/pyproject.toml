@@ -9,5 +9,8 @@ dependencies = [
     "django-cors-headers>=4.9.0",
     "djangorestframework>=3.17.1",
     "imagekitio>=5.4.0",
+    "jose>=1.0.0",
     "python-dotenv>=1.2.2",
+    "python-jose>=3.5.0",
+    "requests>=2.33.1",
 ]

@@ -19,6 +19,35 @@ export default function ProductClient({ product }: any) {
     setTimeout(() => setToastVisible(false), 2500);
   };
 
+  const addToCart = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      showToast("Please login first 🔐");
+      return;
+    }  
+
+    try {
+      const res = await fetch("http://localhost:8000/add-to-cart/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          product_id: product.id,
+          quantity: qty,
+        }),
+    });
+
+    if (!res.ok) throw new Error("Failed");
+
+    showToast("Added to cart ✓");
+  } catch (err) {
+    showToast("Error adding to cart ❌");
+  }
+  };
+
   // 🛡️ Safe fallback (optional future use)
   const variants = product?.variants || ["Default"];
 
@@ -129,7 +158,7 @@ export default function ProductClient({ product }: any) {
             <div className="space-y-3">
 
               <button
-                onClick={() => showToast("Added to cart ✓")}
+                onClick={addToCart}
                 className="w-full py-3 rounded-xl bg-gradient-to-r from-[#c9a96e] to-[#e6c98a] text-black font-semibold shadow-lg hover:scale-[1.02] active:scale-[0.98] transition"
               >
                 Add to Cart

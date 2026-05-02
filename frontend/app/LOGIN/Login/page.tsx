@@ -38,6 +38,13 @@ export default function LoginPage() {
     alert("Login successful!");
     console.log(data);
 
+    // store Token
+    const token = data.session?.access_token;
+
+  if (token) {
+    localStorage.setItem("token", token);
+  }
+
     // 👉 redirect after login (you can change route)
     window.location.href = "/";
   };

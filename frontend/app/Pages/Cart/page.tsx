@@ -21,42 +21,33 @@ type Product = {
 };
 
 export default function Page() {
-  const [cart, setCart] = useState<CartItem[]>([
-    {
-      id: 1,
-      name: "Air Max Pulse",
-      brand: "Nike",
-      price: 120,
-      quantity: 1,
-      image: "https://images.unsplash.com/photo-1600180758890-6b94519a8ba6?w=400&q=80",
-      color: "Shadow Black",
-    },
-    {
-      id: 2,
-      name: "Watch Series 9",
-      brand: "Apple",
-      price: 299,
-      quantity: 2,
-      image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80",
-      color: "Midnight Steel",
-    },
-    {
-      id: 3,
-      name: "Ultraboost 23",
-      brand: "Adidas",
-      price: 180,
-      quantity: 1,
-      image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80",
-      color: "Carbon Core",
-    },
-  ]);
+  const [cart, setCart] = useState<CartItem[]>([]);
 
-    const [products, setProducts] = useState<Product[]>([]);
-    useEffect(() => {
-      fetch("http://127.0.0.1:8000/products/")
-        .then(res => res.json())
-        .then(data => setProducts(data));
-    }, []);
+  const fetchCart = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) return; // important safety check
+
+    const res = await fetch("http://127.0.0.1:8000/cart/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) {
+      console.error("Failed to fetch cart");
+      return;
+    }
+
+    const data = await res.json();
+    setCart(data);
+  };
+
+  useEffect(() => {
+    fetchCart();
+  }, []);
 
   const [removingId, setRemovingId] = useState<number | null>(null);
 
@@ -78,13 +69,30 @@ export default function Page() {
     );
   };
 
-  const removeItem = (id: number) => {
-    setRemovingId(id);
-    setTimeout(() => {
-      setCart((prev) => prev.filter((item) => item.id !== id));
-      setRemovingId(null);
-    }, 320);
-  };
+  const removeItem = async (id: number) => {
+  const token = localStorage.getItem("token");
+
+  if (!token) return;
+
+  setRemovingId(id);
+
+  const res = await fetch(`http://127.0.0.1:8000/remove-from-cart/${id}/`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    console.error("Failed to delete item");
+    setRemovingId(null);
+    return;
+  }
+
+  setRemovingId(null);
+
+  fetchCart(); // refresh from backend
+};
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 

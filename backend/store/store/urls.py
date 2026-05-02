@@ -17,11 +17,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from app.views import get_products, add_products, get_product_detail, get_auth
-
+from app.views import add_to_cart, get_cart, remove_from_cart
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("products/", get_products),
     path('products/<int:id>/', get_product_detail),
     path("add-products/", add_products),
     path("imagekit-auth/", get_auth),
+    path("add-to-cart/", add_to_cart),
+    path("cart/", get_cart),
+    path("remove-from-cart/<int:id>/", remove_from_cart),
 ]
