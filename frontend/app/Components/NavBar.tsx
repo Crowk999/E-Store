@@ -47,7 +47,7 @@ export default function Navbar() {
   return (
     <nav
       className={`sticky top-0 z-50 border-b transition-colors duration-300 ${
-         "bg-white border-gray-200 text-gray-900"
+         "bg-gray-950 border-white-200 text-white"
       }`}
     >
 
@@ -56,7 +56,7 @@ export default function Navbar() {
 
         {/* LEFT - Logo */}
         <div className="font-semibold text-lg mr-6">
-          <Link href="/">Store</Link>
+          <Link href="/">My Store</Link>
         </div>
 
         {/* CENTER - Search */}
@@ -81,14 +81,14 @@ export default function Navbar() {
         </div>
 
         {/* RIGHT */}
-        <div className="flex items-center gap-4 ml-6">
+        <div className="flex items-center gap-3 mr-5">
 
           {/* Theme */}
           
 
           {/* Checkout */}
           <button
-            className={`px-4 py-2 rounded-full text-sm font-medium ${
+            className={`px-7 py-2 rounded-full text-sm font-medium ${
               "bg-black text-white"
             }`}
           >
@@ -98,10 +98,10 @@ export default function Navbar() {
           {/* Cart */}
           <Link href="/Pages/Cart">
           <div className="relative">
-            <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
+            <button className="p-2 mr-4 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
               <ShoppingCart size={20} />
             </button>
-            <span className="absolute -top-1 -right-1 text-xs bg-red-500 text-white px-1.5 rounded-full">
+            <span className="absolute mr-4 -top-1 -right-1 text-xs bg-red-500 text-white px-1.5 rounded-full">
               2
             </span>
           </div>
@@ -117,7 +117,7 @@ export default function Navbar() {
             loggedIn ? (
               <button 
                 onClick={handleLogout}
-                className="px-3 py-2 text-sm border rounded-full hover:bg-red-50 dark:hover:bg-red-900 transition"
+                className="px-3 py-2 mr-3 text-sm border rounded-full hover:bg-red-50 dark:hover:bg-red-900 transition"
               >
                 Logout
               </button>
