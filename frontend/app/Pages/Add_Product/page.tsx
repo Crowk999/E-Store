@@ -1,5 +1,6 @@
 "use client";
 import { useState, useRef } from "react";
+import {supabase} from "@/utils/supabase/client"
 
 export default function AddProductPage() {
   const [image, setImage] = useState<string | null>(null);
@@ -74,12 +75,15 @@ export default function AddProductPage() {
 
   console.log("Image URL:", imageUrl);
 
+  const { data: { session } } = await supabase.auth.getSession()
+  const token = session?.access_token
   // 🔥 STEP 2: send to Django
   await fetch("http://localhost:8000/add-products/", {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
-    },
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${token}`
+  },
     body: JSON.stringify({
     product_name: name,
     product_price: price,
@@ -89,6 +93,7 @@ export default function AddProductPage() {
     product_colour: colour
       }),
   });
+  
 
   //  Countdown logic 
   let t = 10;

@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
+import requests
 from rest_framework.response import Response
-from .models import Add_Product, Cart
+from .models import Add_Product, Cart, User
 from .serializer import CartSerializer, ProductSerializer
 import os
 from dotenv import load_dotenv
@@ -34,12 +35,14 @@ def get_user_from_token(token):
             "Authorization": f"Bearer {token}",
             "apikey": SUPABASE_ANON_KEY
         }
-    )
+    ) 
+    if not res:
+        print("No Res")
 
     if res.status_code != 200:
         print("SUPABASE AUTH FAILED:", res.text)
         return None
-
+    print(res)
     return res.json()
 
 @api_view(["GET"])
@@ -61,6 +64,42 @@ def get_auth(request):
         "signature": signature
     })
 
+
+def get_db_user(request):
+    if not request:
+        print("No REQUEST")
+        return None
+    
+    auth_header = request.headers.get("Authorization")
+
+    if not auth_header:
+        return Response({"error": "No token"}, status=401)
+
+    token = auth_header.split(" ")[1]
+
+    data = get_user_from_token(token)
+    #print(data)
+    if not data:  
+        print("NO DATA")                      
+        return None
+    
+    supabase_id = data["id"]
+    email = data.get("email", "")
+
+    if not supabase_id:
+        print("NO id of SUPABASE....")
+        return None
+
+    user, _ = User.objects.get_or_create(
+        supabase_id = supabase_id,
+        defaults={
+            "email":email,
+            "role":"customer"
+        }
+    )
+    #print(user)
+    return user
+
 @api_view(["GET"])
 def get_products(request):
     products = Add_Product.objects.all()
@@ -75,15 +114,27 @@ def get_product_detail(request, id):
 
 @api_view(["POST"])
 def add_products(request):
+    
+    user = get_db_user(request)
+
+    if not user:
+        print("No USER")
+        return Response({"error": "Unauthorized"}, status=401)
+
+    print(user.role)
+    if user.role != "customer":
+        print("NOT ADMIN")
+        return Response({"error": "You are not allowed"}, status=403)
+    
     serializer = ProductSerializer(data=request.data)
 
     if serializer.is_valid():
-        serializer.save()
+        serializer.save(user=user)
         print("SAVED:", serializer.data) 
         return Response(serializer.data)
-    
     print("ERRORS:", serializer.errors)
     return Response(serializer.errors)
+    
 
 @api_view(["POST"])
 def add_to_cart(request):
