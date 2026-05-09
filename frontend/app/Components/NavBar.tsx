@@ -7,7 +7,7 @@ import { supabase } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 
 export default function Navbar() {
-  const [dark, setDark] = useState(false);
+  
   const [loggedIn, setLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [userInitial, setUserInitial] = useState(""); // 👈 NEW: store user initial
@@ -47,9 +47,7 @@ export default function Navbar() {
   return (
     <nav
       className={`sticky top-0 z-50 border-b transition-colors duration-300 ${
-        dark
-          ? "bg-gray-900 border-gray-800 text-white"
-          : "bg-white border-gray-200 text-gray-900"
+         "bg-white border-gray-200 text-gray-900"
       }`}
     >
 
@@ -65,7 +63,7 @@ export default function Navbar() {
         <div className="flex flex-1 max-w-2xl">
           <div
             className={`flex w-full items-center rounded-full border overflow-hidden ${
-              dark ? "bg-gray-800 border-gray-700" : "bg-gray-100 border-gray-200"
+               "bg-gray-800 border-gray-700" 
             }`}
           >
             <input
@@ -74,7 +72,7 @@ export default function Navbar() {
             />
             <button
               className={`px-4 py-2 ${
-                dark ? "hover:bg-gray-700" : "hover:bg-gray-200"
+                "hover:bg-gray-700" 
               }`}
             >
               <Search size={18} />
@@ -86,17 +84,12 @@ export default function Navbar() {
         <div className="flex items-center gap-4 ml-6">
 
           {/* Theme */}
-          <button
-            onClick={() => setDark(!dark)}
-            className="p-2 rounded-full hover:bg-opacity-10 hover:bg-gray-500 transition"
-          >
-            {dark ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
+          
 
           {/* Checkout */}
           <button
             className={`px-4 py-2 rounded-full text-sm font-medium ${
-              dark ? "bg-white text-black" : "bg-black text-white"
+              "bg-black text-white"
             }`}
           >
             Checkout
@@ -150,9 +143,7 @@ export default function Navbar() {
 
           <div className="flex items-center gap-3">
 
-            <button onClick={() => setDark(!dark)}>
-              {dark ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
+            
 
             <div className="relative">
               <ShoppingCart size={20} />
@@ -167,7 +158,7 @@ export default function Navbar() {
         {/* SEARCH (full width, not squeezed) */}
         <div
           className={`flex items-center rounded-full border overflow-hidden ${
-            dark ? "bg-gray-800 border-gray-700" : "bg-gray-100 border-gray-200"
+            "bg-gray-800 border-gray-700"
           }`}
         >
           <input
@@ -184,7 +175,7 @@ export default function Navbar() {
 
           <button
             className={`px-4 py-2 rounded-full text-sm ${
-              dark ? "bg-white text-black" : "bg-black text-white"
+               "bg-black text-white"
             }`}
           >
             Checkout
