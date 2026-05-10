@@ -30,7 +30,13 @@ export default function AddProductPage() {
   const uploadToImageKit = async () => {
   if (!file) return null;
 
-  const authRes = await fetch("http://localhost:8000/imagekit-auth/");
+  const { data: { session } } = await supabase.auth.getSession()
+  const token = session?.access_token
+  const authRes = await fetch("http://localhost:8000/imagekit-auth/",{
+    headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${token}`
+  },});
   const auth = await authRes.json();
   const formData = new FormData();
   formData.append("file", file);
@@ -39,7 +45,7 @@ export default function AddProductPage() {
   formData.append("token", auth.token);
   formData.append("expire", auth.expire);
   formData.append("signature", auth.signature);
-
+  
   const res = await fetch(
     "https://upload.imagekit.io/api/v1/files/upload",
     {

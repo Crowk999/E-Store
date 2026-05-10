@@ -29,6 +29,7 @@ def random_token(length=16):
     return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
 
 def get_user_from_token(token):
+    
     res = requests.get(
         f"{SUPABASE_URL}/auth/v1/user",
         headers={
@@ -47,6 +48,18 @@ def get_user_from_token(token):
 
 @api_view(["GET"])
 def get_auth(request):
+
+    user = get_db_user(request)
+
+    if not user:
+        print("No USER")
+        return Response({"error": "Unauthorized"}, status=401)
+
+    #print(user.role)
+    if user.role != "customer":
+        print("NOT ADMIN")
+        return Response({"error": "You are not allowed"}, status=403)
+
     token = random_token()
     expire = int(time.time()) + 2400  # 40 minutes
 
@@ -70,10 +83,14 @@ def get_db_user(request):
         print("No REQUEST")
         return None
     
-    auth_header = request.headers.get("Authorization")
+    try:
+        auth_header = request.headers.get("Authorization")
+    except IndexError:
+        return None
 
     if not auth_header:
-        return Response({"error": "No token"}, status=401)
+        #return Response({"error": "No token"}, status=401)
+        return None
 
     token = auth_header.split(" ")[1]
 
@@ -83,7 +100,8 @@ def get_db_user(request):
         print("NO DATA")                      
         return None
     
-    supabase_id = data["id"]
+    #supabase_id = data["id"]
+    supabase_id = data.get("id")
     email = data.get("email", "")
 
     if not supabase_id:
@@ -121,7 +139,7 @@ def add_products(request):
         print("No USER")
         return Response({"error": "Unauthorized"}, status=401)
 
-    print(user.role)
+    #print(user.role)
     if user.role != "customer":
         print("NOT ADMIN")
         return Response({"error": "You are not allowed"}, status=403)
