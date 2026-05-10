@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Loader from "./Components/Loader"
 import { useEffect, useState } from "react";
 
 type Product = {
@@ -13,13 +14,19 @@ type Product = {
 export default function ProductsPage() {
 
   const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     fetch("http://127.0.0.1:8000/products/")
       .then(res => res.json())
-      .then(data => setProducts(data));
+      .then(data => {setProducts(data);
+        setLoading(false);
+  });
   }, []);
 
-  
+  if(loading){
+    return(
+   <Loader/>);
+  }
 
   return (
     <div className="bg-gray-950 min-h-screen text-gray-200 px-6 py-12">

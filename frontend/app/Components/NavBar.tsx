@@ -82,10 +82,14 @@ export default function Navbar() {
 
         {/* RIGHT */}
         <div className="flex items-center gap-3 mr-5">
-
+          
+          <Link href="/Pages/Add_Product">
+            <button className="px-3 text-white py-2 text-sm border rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+              Add
+            </button>
+          </Link>
           {/* Theme */}
           
-
           {/* Checkout */}
           <button
             className={`px-7 py-2 rounded-full text-sm font-medium ${
@@ -139,12 +143,18 @@ export default function Navbar() {
         {/* TOP BAR */}
         <div className="flex items-center justify-between">
 
-          <div className="font-semibold text-lg">Store</div>
+          <div className="font-semibold text-lg">
+            <Link href="/">My Store</Link>
+          </div>
 
           <div className="flex items-center gap-3">
 
             
-
+          <Link href="/Pages/Add_Product">
+            <button className="px-3 text-white py-2 text-sm border rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+              Add
+            </button>
+          </Link>
             <div className="relative">
               <ShoppingCart size={20} />
               <span className="absolute -top-1 -right-2 text-xs bg-red-500 text-white px-1 rounded-full">
