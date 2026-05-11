@@ -29,7 +29,7 @@ export default function AddProductPage() {
 
   const uploadToImageKit = async () => {
   if (!file) return null;
-
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
   const { data: { session } } = await supabase.auth.getSession()
   const token = session?.access_token
   const authRes = await fetch("http://localhost:8000/imagekit-auth/",{
@@ -40,7 +40,7 @@ export default function AddProductPage() {
   const auth = await authRes.json();
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("publicKey", "public_ZlPPlks3ZilPQ95dIM4ip19laNY=");
+  formData.append("publicKey", supabaseAnonKey);
   formData.append("fileName", file.name);
   formData.append("token", auth.token);
   formData.append("expire", auth.expire);

@@ -20,13 +20,25 @@ type Product = {
   product_image: string;
 };
 
+const [toastMsg, setToastMsg] = useState("");
+  const [toastVisible, setToastVisible] = useState(false);
+
+
+const showToast = (msg: string) => {
+    setToastMsg(msg);
+    setToastVisible(true);
+    setTimeout(() => setToastVisible(false), 2500);
+  };
+
 export default function Page() {
   const [cart, setCart] = useState<CartItem[]>([]);
 
   const fetchCart = async () => {
     const token = localStorage.getItem("token");
 
-    if (!token) return; // important safety check
+    if (!token) return(
+      <div>No</div>
+    ); // important safety check
 
     const res = await fetch("http://127.0.0.1:8000/cart/", {
       method: "GET",
@@ -38,6 +50,7 @@ export default function Page() {
 
     if (!res.ok) {
       console.error("Failed to fetch cart");
+      showToast("Falied to Fetch Cart")
       return;
     }
 

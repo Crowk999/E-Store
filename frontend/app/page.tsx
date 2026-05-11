@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import Loader from "./Components/Loader"
+import NoProducts from "./Components/Noproduct";
 import { useEffect, useState } from "react";
 
 type Product = {
@@ -15,17 +16,32 @@ export default function ProductsPage() {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string|null>(null)
+
   useEffect(() => {
     fetch("http://127.0.0.1:8000/products/")
-      .then(res => res.json())
+      .then(res =>{
+        if(!res.ok){
+          throw new Error("This is not okay")
+        }
+        return res.json();
+      })
       .then(data => {setProducts(data);
         setLoading(false);
-  });
+      })
+      .catch(err =>{
+        setError(err.message);
+        setLoading(false);
+      });
   }, []);
 
   if(loading){
     return(
    <Loader/>);
+  }
+
+  if(error){
+    return(<NoProducts/>);
   }
 
   return (
