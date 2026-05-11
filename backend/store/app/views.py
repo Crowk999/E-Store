@@ -56,7 +56,7 @@ def get_auth(request):
         return Response({"error": "Unauthorized"}, status=401)
 
     #print(user.role)
-    if user.role != "customer":
+    if user.role != "admin":
         print("NOT ADMIN")
         return Response({"error": "You are not allowed"}, status=403)
 
@@ -140,7 +140,7 @@ def add_products(request):
         return Response({"error": "Unauthorized"}, status=401)
 
     #print(user.role)
-    if user.role != "customer":
+    if user.role != "admin":
         print("NOT ADMIN")
         return Response({"error": "You are not allowed"}, status=403)
     

@@ -20,18 +20,18 @@ type Product = {
   product_image: string;
 };
 
-const [toastMsg, setToastMsg] = useState("");
-  const [toastVisible, setToastVisible] = useState(false);
 
-
-const showToast = (msg: string) => {
-    setToastMsg(msg);
-    setToastVisible(true);
-    setTimeout(() => setToastVisible(false), 2500);
-  };
 
 export default function Page() {
   const [cart, setCart] = useState<CartItem[]>([]);
+
+  const [toastMsg, setToastMsg] = useState("");
+  const [toastVisible, setToastVisible] = useState(false);
+  const showToast = (msg: string) => {
+      setToastMsg(msg);
+      setToastVisible(true);
+      setTimeout(() => setToastVisible(false), 2500);
+    };
 
   const fetchCart = async () => {
     const token = localStorage.getItem("token");

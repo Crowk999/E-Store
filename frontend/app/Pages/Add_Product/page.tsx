@@ -9,12 +9,21 @@ export default function AddProductPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isSubmitting = useRef(false);
 
+  const ImageKit_Key = process.env.IMAGEKIT_PUBLIC_KEY as string;
+
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [brand, setBrand] = useState("");
   const [colour, setColour] = useState("");
   
+  const resetForm = () => {
+  setName("");
+  setPrice("");
+  setDescription("");
+  setBrand("");
+  setColour("");
+  };
 
   const loadImage = (file: File) => {
   if (!file || !file.type.startsWith("image/")) return;
@@ -29,7 +38,7 @@ export default function AddProductPage() {
 
   const uploadToImageKit = async () => {
   if (!file) return null;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
+
   const { data: { session } } = await supabase.auth.getSession()
   const token = session?.access_token
   const authRes = await fetch("http://localhost:8000/imagekit-auth/",{
@@ -40,7 +49,7 @@ export default function AddProductPage() {
   const auth = await authRes.json();
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("publicKey", supabaseAnonKey);
+  formData.append("publicKey", ImageKit_Key);
   formData.append("fileName", file.name);
   formData.append("token", auth.token);
   formData.append("expire", auth.expire);
@@ -60,6 +69,7 @@ export default function AddProductPage() {
 
   if (!data.url) {
     console.error("UPLOAD FAILED:", data);
+    
     return null;
   }
 
@@ -100,6 +110,10 @@ export default function AddProductPage() {
       }),
   });
   
+  {/* This Three resets the whole form and its data. */}
+  setImage(null);
+  setFile(null);
+  resetForm();
 
   //  Countdown logic 
   let t = 10;
