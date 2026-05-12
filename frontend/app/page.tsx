@@ -19,7 +19,7 @@ export default function ProductsPage() {
   const [error, setError] = useState<string|null>(null)
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/products/")
+    fetch("https://e-store-ja69.onrender.com/products/")
       .then(res =>{
         if(!res.ok){
           throw new Error("This is not okay")

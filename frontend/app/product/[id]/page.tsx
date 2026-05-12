@@ -2,7 +2,7 @@ import ProductClient from "./product_client";
 import ProductNotFound from "./NoProduct";
 
 async function getProduct(id: string) {
-  const res = await fetch(`http://127.0.0.1:8000/products/${id}/`, {
+  const res = await fetch(`https://e-store-ja69.onrender.com/products/${id}/`, {
     cache: "no-store",
   });
 

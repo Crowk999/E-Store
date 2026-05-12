@@ -41,7 +41,7 @@ export default function AddProductPage() {
 
   const { data: { session } } = await supabase.auth.getSession()
   const token = session?.access_token
-  const authRes = await fetch("http://localhost:8000/imagekit-auth/",{
+  const authRes = await fetch("https://e-store-ja69.onrender.com/imagekit-auth/",{
     headers: {
     "Content-Type": "application/json",
     "Authorization": `Bearer ${token}`
@@ -94,7 +94,7 @@ export default function AddProductPage() {
   const { data: { session } } = await supabase.auth.getSession()
   const token = session?.access_token
   // 🔥 STEP 2: send to Django
-  await fetch("http://localhost:8000/add-products/", {
+  await fetch("https://e-store-ja69.onrender.com/add-products/", {
     method: "POST",
     headers: {
     "Content-Type": "application/json",
