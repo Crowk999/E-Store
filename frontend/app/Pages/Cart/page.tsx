@@ -40,7 +40,7 @@ export default function Page() {
       <div>No</div>
     ); // important safety check
 
-    const res = await fetch("http://127.0.0.1:8000/cart/", {
+    const res = await fetch("https://e-store-ja69.onrender.com/cart/", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -98,7 +98,7 @@ export default function Page() {
 
     setRemovingId(id);
 
-    const res = await fetch(`http://127.0.0.1:8000/remove-from-cart/${id}/`, {
+    const res = await fetch(`https://e-store-ja69.onrender.com/remove-from-cart/${id}/`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
