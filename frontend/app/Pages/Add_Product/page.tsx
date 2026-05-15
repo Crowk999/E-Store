@@ -9,7 +9,7 @@ export default function AddProductPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isSubmitting = useRef(false);
 
-  const ImageKit_Key = process.env.IMAGEKIT_PUBLIC_KEY as string;
+  const ImageKit_Key = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY as string;
 
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");

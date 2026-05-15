@@ -28,7 +28,7 @@ export default function ProductClient({ product }: any) {
     }  
 
     try {
-      const res = await fetch("http://localhost:8000/add-to-cart/", {
+      const res = await fetch("https://e-store-ja69.onrender.com/add-to-cart/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
