@@ -8,6 +8,7 @@ export default function AddProductPage() {
   const [countdown, setCountdown] = useState<number>(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isSubmitting = useRef(false);
+  const [isAdding, setIsAdding] = useState(false)
 
   const ImageKit_Key = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY as string;
 
@@ -94,7 +95,9 @@ export default function AddProductPage() {
   const { data: { session } } = await supabase.auth.getSession()
   const token = session?.access_token
   // 🔥 STEP 2: send to Django
-  await fetch("https://e-store-ja69.onrender.com/add-products/", {
+
+  setIsAdding(true)
+   try { const resp = await fetch("https://e-store-ja69.onrender.com/add-products/", {
     method: "POST",
     headers: {
     "Content-Type": "application/json",
@@ -109,6 +112,10 @@ export default function AddProductPage() {
     product_colour: colour
       }),
   });
+
+  if (!resp.ok) {
+    throw new Error("Request failed");
+  }
   
   {/* This Three resets the whole form and its data. */}
   setImage(null);
@@ -127,7 +134,14 @@ export default function AddProductPage() {
     } else {
       setCountdown(t);
     }
-  }, 1000);
+  }, 1000);}
+  catch (err) {
+      alert("Error sending message ❌");
+      console.error(err);
+  }
+  finally{
+    setIsAdding(false)
+  }
   };
 
   return (
@@ -287,14 +301,17 @@ export default function AddProductPage() {
             {/* Submit Button */}
             <button
               onClick={handleSubmit}
-              disabled={countdown > 0}
+              disabled={isAdding || countdown > 0}
               className={`w-full py-4 rounded-[13px] text-white text-[0.95rem] font-bold tracking-wide transition-all
-                ${countdown > 0
+                ${isAdding ||countdown > 0
                   ? "bg-white/[0.07] text-white/30 cursor-not-allowed"
                   : "bg-linear-to-r from-violet-600 via-pink-500 to-orange-500 hover:opacity-90 hover:-translate-y-px active:translate-y-0 cursor-pointer"
                 }`}
             >
-              {countdown > 0 ? `Wait ${countdown}s to publish again` : "Publish Product"}
+              {
+              isAdding?"Adding.....":
+              countdown > 0 ? `Wait ${countdown}s to publish again` :
+              "Publish Product"}
             </button>
 
           </div>
